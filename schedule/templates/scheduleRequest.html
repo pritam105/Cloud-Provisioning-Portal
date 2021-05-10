@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title> Insert Servers </title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+    <script src='main.js'></script>
+</head>
+<body>
+    <center>
+        <h1> Select Server you want to schedule from the Dropdown </h1>
+        <hr/>
+        <!--
+        <ul> 
+        {% for i in result %}
+            <li> {{i.sname}} </li>
+        {% endfor %}
+        </ul>
+    -->
+          
+    <form method="POST">
+        {% csrf_token%}
+       
+        <select name = 'sername'> 
+            <option selected disabled = True > --Select Name-- </option>
+            {% for result in serverobj %}
+            <option> {{result.sname}} </option>
+            {% endfor %}
+        </select>
+
+        <!-- Start Time  : <input type = "text" name = "start" required/> -->
+        Start Time  : <input type = "text" name = "start">
+        Stop Time  : <input type = "text" name = "stop">
+        Choose : <input type = "text" name = "choice">
+
+        <input type = "submit" value = "Insert into schedule record">        
+    </form>
+    
+    </center>
+</body>
+</html>
