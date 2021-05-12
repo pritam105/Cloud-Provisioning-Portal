@@ -19,28 +19,28 @@ def insertserver(request):
 
 def scheduleRequest(request) :
     results = server.objects.all()
-    
+    d = list(range(1,31))
+    h = list(range(0,24))
+    m = list(range(0,60))
+
+    context = {'serverobj': results,
+               'datee': d,
+               'hr': h,
+               'min': m
+    }
+
     if request.method == "POST" :
+        
         if request.POST.get('sername') :
             instance = scheduleserver()
-            instance.sername = request.POST.get('sername')
+            sn = request.POST.get('sername')
+            instance.sername = sn 
             instance.save()
 
-        if request.POST.get('start') :
-            instance.start = request.POST.get('start')
-            instance.save()
+        if request.POST.get('startD') :
+            updater.start(sn, request.POST.get('startD'), request.POST.get('startH'), request.POST.get('startM'))
 
-        if request.POST.get('stop') :
-            instance.stop = request.POST.get('stop')
-            instance.save()
-
-        if request.POST.get('choice') == '1' :
-            updater.start("i-07a2fc035f39f3c7e", 1)
-            
-        if request.POST.get('choice') == '2' :
-            updater.start("i-0081f9a95017d789b", 2)    
-
-        return render(request, 'scheduleRequest.html', {'serverobj': results})
+        return render(request, 'scheduleRequest.html', context)
             
     else :         
-        return render(request, 'scheduleRequest.html', {'serverobj': results})
+        return render(request, 'scheduleRequest.html', context)

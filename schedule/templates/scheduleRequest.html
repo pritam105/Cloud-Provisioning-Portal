@@ -31,9 +31,29 @@
         </select>
 
         <!-- Start Time  : <input type = "text" name = "start" required/> -->
-        Start Time  : <input type = "text" name = "start">
-        Stop Time  : <input type = "text" name = "stop">
-        Choose : <input type = "text" name = "choice">
+
+        <select name = 'startD'> 
+            <option selected disabled = True > --Select Date-- </option>
+            {% for d in datee %}
+            <option> {{d}} </option>
+            {% endfor %}
+        </select>
+
+        <select name = 'startH'> 
+            <option selected disabled = True > --Select hr-- </option>
+            {% for h in hr %}
+            <option> {{h}} </option>
+            {% endfor %}
+        </select>
+
+        <select name = 'startM'> 
+            <option selected disabled = True > --Select min-- </option>
+            {% for m in min %}
+            <option> {{m}} </option>
+            {% endfor %}
+        </select>
+  
+        <!-- Stop Time  : <input type = "text" name = "stop"> -->
 
         <input type = "submit" value = "Insert into schedule record">        
     </form>
