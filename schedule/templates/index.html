@@ -9,8 +9,10 @@
     <script src='main.js'></script>
 </head>
 <body>
+
+    {% include 'navbar.html' %}
     <center>
-        <h1> Insert the server name </h1>
+        <h3> Add Server Name </h3>
         <hr/>
     <form method = "post"> 
         {% csrf_token %} 
@@ -18,17 +20,6 @@
         Server Name : <input type = "text" placeholder = "enter the server name" name = "sname" required/>
 
         <input type = "submit" value = "Insert record">
-
-        <!--
-        <select name = 'Sname'> 
-             
-            <option selected disabled = True > --Select Name-- </option>
-            <option> chatbot </option>
-            <option> mob app </option>
-            <option> website </option>
-            
-        </select>
-        -->
     
         {% if messages %}
         {% for x in messages %}

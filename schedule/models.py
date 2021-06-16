@@ -13,8 +13,11 @@ class server(models.Model):
 
 class scheduleserver(models.Model):
 	sername = models.CharField(max_length=200, null=True)
-	start = models.CharField(max_length=10, null=True)
-	stop = models.CharField(max_length=10, null=True)
+	date = models.DateField(blank=True, null=True)
+	start = models.TimeField(max_length=10, null=True)
+	stop = models.TimeField(max_length=10, null=True)
+	From = models.DateField(blank=True, null=True)
+	To = models.DateField(blank=True, null=True)
 
 	class Meta:
 		db_table = 'scheduleserver'
