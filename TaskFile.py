@@ -89,7 +89,7 @@ def main() :
     #print(tp>records[5][2])
     # 0,  1,          2,     3,    4,    5,  6
     # ID, Servername, Start, Stop, From, To, Date
-    '''    
+       
     if weekdayFlag : 
         startTime = datetime.time(9, 00) 
         stopTime = datetime.time(22, 00) 
@@ -402,7 +402,7 @@ def Wait_Verify(InstList):
         for i in res['Reservations'] :
             if i['Instances'][0]['State']['Name'] == 'running' : 
                 running +=1 
-'''
+
 
 def defaultCheck(records) :
     startS = []
