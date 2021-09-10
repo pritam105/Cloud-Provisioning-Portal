@@ -1,0 +1,22 @@
+{% extends 'generic.html' %}
+
+
+{% block content %}
+    <h3> Select Servers to be Stopped Immediately </h3>
+    <hr/>
+    <form method = "post"> 
+        {% csrf_token %} 
+        <table>
+            {{ form.as_table }}
+        </table>
+    <br/>
+        <input type = "submit" value = "Insert record">
+
+    {% if messages %}
+    {% for x in messages %}
+    <h3>{{x}} </h3>
+    {% endfor %}
+    {% endif %}
+        
+    </form>
+{% endblock %}

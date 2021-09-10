@@ -4,3 +4,4 @@ from .models import *
 
 admin.site.register(server)
 admin.site.register(scheduleserver)
+admin.site.register(rds)

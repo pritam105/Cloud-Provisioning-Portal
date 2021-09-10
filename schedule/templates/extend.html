@@ -1,0 +1,32 @@
+{% extends 'generic.html' %}
+
+{% block content %}
+        <h2> Extend the Server Runtime </h2>
+        <hr/>
+        <br/>
+
+        <form method="POST">
+            {% csrf_token%}
+            Server Name :
+            <select name = 'sername'> 
+                <option selected disabled = True > --Select Name-- </option>
+                {% for result in serverobj %}
+                <option> {{result.sname}} </option>
+                {% endfor %}
+            </select>
+
+            <br/> <br/> 
+            Extend Till  :  
+            <input type = 'date' name = 'date' >   
+            <input type = 'time' name = 'stop' step = '1800' >
+            <br/> <br/> 
+            <input type = 'submit' value = 'Submit'>
+
+        {% if messages %}
+        {% for x in messages %}
+        <h3>{{x}} </h3>
+        {% endfor %}
+        {% endif %}
+        
+        </form>
+{% endblock %}

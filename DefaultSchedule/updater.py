@@ -2,7 +2,7 @@ from datetime import datetime
 from datetime import date 
 from apscheduler.schedulers.background import BackgroundScheduler
 from django_apscheduler.jobstores import DjangoJobStore
-from DefaultSchedule import TaskScript
+#from DefaultSchedule import TaskScript
 
 '''
 def start(serverid, Datee, Hr, Minute):

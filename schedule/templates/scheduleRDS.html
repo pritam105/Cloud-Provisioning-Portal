@@ -1,18 +1,24 @@
-{% extends 'generic.html' %}
-
-
-{% block content %}
-        <h2> Exempt - Schedule Server </h2>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>
+        Schedule RDS Server
+    </title>
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <center>
+        <h2> Select the RDS to be Scheduled from the Dropdown </h2>
         <hr/>
         <br/>
 
     <form method="POST">
         {% csrf_token%}
         Server Name :
-        <select name = 'sername'> 
+        <select name = 'RDSname'> 
             <option selected disabled = True > --Select Name-- </option>
-            {% for result in serverobj %}
-            <option> {{result.sname}} </option>
+            {% for result in rdsobj %}
+            <option> {{result.RDSname}} </option>
             {% endfor %}
         </select>
         <br/>
@@ -51,12 +57,12 @@
                     {    
                         if(ele[i].value == "Schedule Once")
                         {  
-                            output.innerHTML = "Date : "+"<input type = 'date' name = 'date' >   Start Time : <input type = 'time' name = 'start' step = '1800' >   Stop Time  : <input type = 'time' name = 'stop' step = '1800' > <br/> <br/> <input type = 'submit' value = 'Insert into schedule record'>";
+                            output.innerHTML += "Date : "+"<input type = 'date' name = 'date' >   Start Time : <input type = 'time' name = 'start' >   Stop Time  : <input type = 'time' name = 'stop' > <br/> <br/> <input type = 'submit' value = 'Insert into schedule record'>";
                         }
 
                         else
                         {  
-                            output.innerHTML = "From : <input type = 'date' name = 'date' >  To : <input type = 'date' name = 'date' > <br/> <br/> Start Time : <input type = 'time' name = 'start' step = '1800' >  Stop Time  : <input type = 'time' name = 'stop' step = '1800' > <br/> <br/> <input type = 'submit' value = 'Insert into schedule record'>";
+                            output.innerHTML += "From : <input type = 'date' name = 'date' >  To : <input type = 'date' name = 'date' > <br/> <br/> Start Time : <input type = 'time' name = 'start' >  Stop Time  : <input type = 'time' name = 'stop' > <br/> <br/> <input type = 'submit' value = 'Insert into schedule record'>";
                         }
                     }  
                 }      
@@ -68,15 +74,9 @@
         Start Time  : <input type = "time" name = 'start' >
         Stop Time  : <input type = "time" name = 'stop' > 
     
-        <input type = "submit" value = "Insert into schedule record">  -->  
-        
-        {% if messages %}
-        {% for x in messages %}
-        <h3>{{x}} </h3>
-        {% endfor %}
-        {% endif %}
-        
+        <input type = "submit" value = "Insert into schedule record">  -->      
     </form>
     
-    
-{% endblock %}
+    </center>
+</body>
+</html>
