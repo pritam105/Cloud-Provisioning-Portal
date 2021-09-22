@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User, Group 
 
 # Create your models here.
 
@@ -20,6 +21,7 @@ class scheduleserver(models.Model):
 	From = models.DateField(blank=True, null=True)
 	To = models.DateField(blank=True, null=True)
 	scheduleFlag = models.IntegerField(default = 0)
+	user_grp = models.ManyToManyField(Group)
 
 	class Meta:
 		db_table = 'scheduleserver'

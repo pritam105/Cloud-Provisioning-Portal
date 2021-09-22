@@ -9,12 +9,13 @@
     <form method="POST">
         {% csrf_token%}
         Server Name :
-        <select name = 'sername'> 
+        <select name = 'sername' multiple = "" class = "ui fluid dropdown"> 
             <option selected disabled = True > --Select Name-- </option>
             {% for result in serverobj %}
-            <option> {{result.sname}} </option>
+            <option> {{result.sername}} </option>
             {% endfor %}
         </select>
+        
         <br/>
         <br/>
         <br/>

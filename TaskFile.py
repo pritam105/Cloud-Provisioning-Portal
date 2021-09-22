@@ -90,6 +90,7 @@ def main() :
     # 0,  1,          2,     3,    4,    5,  6
     # ID, Servername, Start, Stop, From, To, Date
        
+    '''   
     if weekdayFlag : 
         startTime = datetime.time(9, 00) 
         stopTime = datetime.time(22, 00) 
@@ -371,8 +372,6 @@ def main() :
 #Call Start an Stop Instance functions and send the instance id list as parameters to them. 
     #StartInstance(startS) 
     #StopInstance(stopS)          
-    '''    
-'''
 
     if ((Hr_now > 22 or Hr_now < 9) and weekdayFlag) or weekendFlag : 
         
@@ -442,6 +441,84 @@ def defaultCheck(records) :
     #Call Start an Stop Instance functions and send the instance id list as parameters to them. 
     StartInstance(startS) 
     StopInstance(stopS)
+    '''
+    startS = []
+    stopS = []
+    onFlag = 0 
+    
+    for row in records:
+        #target_start_hr = row[2].seconds//3600
+        #target_start_min = (row[2].seconds%3600)//60
+        
+        #List of instance IDs of all infra critical servers
+        infraCritical = server.objects.filter(infraCritical = 1).values_list('InstID', flat = True)
+        
+        target_start_hr = row.start.hour 
+        target_start_min = row.start.minute
+
+        target_stop_hr = row.stop.hour
+        target_stop_min = row.stop.minute 
+
+        if row.ActiveStatus : 
+            if row.scheduleFlag == 1 : 
+                if date.today() == row.Date :
+                    if target_start_hr == Hr_now and target_start_min == Min_now :  
+                        startS.append(row.InstID)
+
+                    if target_stop_hr == Hr_now and target_stop_min == Min_now :
+                        stopS.append(row.InstID)
+                        row.scheduleFlag = 0 
+                        row.Date = None
+                        row.start = None
+                        row.stop = None 
+
+                    elif datetime.now().time() < row.start or datetime.now().time() > row.stop: 
+                        #Current time is before or after the slot 
+                        stopS.append(row.InstID)    
+
+                    elif row.start < datetime.now().time() < row.stop :
+                        #Current time is between the slot timings
+                        onFlag = 1 
+                        
+                elif row.Date < date.today() :    #Date is in the past : 
+                    row.Date = None
+                    stopS.append(row.InstID)
+
+                elif row.Date > date.today() :    #Date is in the future : 
+                    stopS.append(row.InstID)        
+
+            elif row.scheduleFlag == 2 :
+                if row.From <= date.today() <= row.To :
+                    if target_start_hr == Hr_now and target_start_min == Min_now :  
+                        startS.append(row.InstID)
+
+                    if target_stop_hr == Hr_now and target_stop_min == Min_now :
+                        stopS.append(row.InstID)
+                        row.scheduleFlag = 0 
+                        row.Date = None
+                        row.start = None
+                        row.stop = None 
+
+                    elif datetime.now().time() < row.start or datetime.now().time() > row.stop: 
+                        #Current time is before or after the slot 
+                        stopS.append(row.InstID) 
+
+                elif row.Date < date.today() :    #Date is in the past : 
+                    row.Date = None
+                    stopS.append(row.InstID)
+
+                elif row.Date > date.today() :    #Date is in the future : 
+                    stopS.append(row.InstID)        
+
+        if len(startS) != 0 :
+            StartInstance(infraCritical) 
+            waiter = ec2.get_waiter('instance_running')
+            waiter.wait(InstanceIds = infraCritical)
+
+            StartInstance(startS)
+        else : 
+            StopInstance(stopS)    
+        StopInstance(stopS)
 
 if __name__ == "__main__" :
     main()

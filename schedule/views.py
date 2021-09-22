@@ -9,7 +9,7 @@ from datetime import datetime
 from datetime import date, time, timedelta 
 
 from .forms import CreateUserForm, YourCreateForm
-from .decorators import unauthenticated_user, allowed_users, admin_only
+from .decorators import unauthenticated_user, allowed_users, admin_only, Dynamic_Display
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -35,7 +35,7 @@ def registerPage(request):
 def loginPage(request):
     if request.method == 'POST':
         username = request.POST.get('username')
-        password =request.POST.get('password')
+        password = request.POST.get('password')
 
         user = authenticate(request, username=username, password=password)
 
@@ -52,8 +52,7 @@ def logoutUser(request):
 	logout(request)
 	return redirect('login')
 
-@login_required(login_url='login') 
-@admin_only  
+@login_required(login_url='login')  
 def insertserver(request):
     if request.method == "POST" :
         if request.POST.get('sname') :
@@ -74,12 +73,12 @@ def insertserver(request):
         return render(request, 'index.html')
 
 @login_required(login_url='login')
-@allowed_users(allowed_roles=['requestor', 'admin'])   
-def scheduleRequest(request) :
-    results = server.objects.values('sname') 
-    #res = scheduleserver.objects.all()
-    #print(res)
-    context = {'serverobj': results}
+#@allowed_users(allowed_roles=['requestor', 'admin'])   
+@Dynamic_Display
+def scheduleRequest(request, *args, **kwargs) :
+
+    #print(args)
+    context = {'serverobj': args}
 
     if request.method == "POST" :
         
@@ -158,11 +157,10 @@ def scheduleRDS(request) :
         return render(request, 'scheduleRDS.html', context)
 
 @login_required(login_url='login')
-@allowed_users(allowed_roles=['requestor', 'admin'])   
+@Dynamic_Display   
 def Extend(request) : 
     
-    results = server.objects.all() 
-    context = {'serverobj': results}
+    context = {'serverobj': args}
 
     if request.method == "POST" :
         
