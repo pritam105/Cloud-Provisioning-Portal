@@ -3,5 +3,5 @@ from .models import *
 # Register your models here.
 
 admin.site.register(server)
-admin.site.register(scheduleserver)
+admin.site.register(requestdetail)
 admin.site.register(rds)

@@ -82,7 +82,8 @@ def scheduleRequest(request, *args, **kwargs) :
 
     if request.method == "POST" :
         
-        instance = scheduleserver.objects.get(sername = request.POST.get('sername'))
+        #instance = scheduleserver.objects.get(sername = request.POST.get('sername'))
+        instance = requestdetail()
 
         if request.POST.get('date') :
             '''
@@ -90,16 +91,19 @@ def scheduleRequest(request, *args, **kwargs) :
                 messages.success(request, 'Please enter a valid Date!')
             '''
             instance.scheduleFlag = 1
+            instance.sername = request.POST.get('sername')
             instance.date = request.POST.get('date')
             instance.start = request.POST.get('start')
             instance.stop = request.POST.get('stop')
             instance.From = None
             instance.To = None
+            instance.username = request.user.username 
             instance.save()
             messages.success(request, 'The schedule request for "'+ instance.sername + '" is submitted')
 
         if request.POST.get('From') :
             instance.scheduleFlag = 2
+            instance.sername = request.POST.get('sername')
             instance.start = request.POST.get('start')
             instance.stop = request.POST.get('stop')
             instance.From = request.POST.get('From')

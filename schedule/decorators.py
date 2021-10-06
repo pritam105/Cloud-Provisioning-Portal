@@ -33,10 +33,12 @@ def Dynamic_Display(view_func):
 		group = None
 		print("hi")
 		if request.user.groups.exists():
-			group = list(request.user.groups.values_list('id',flat = True))
-			args = scheduleserver.objects.filter(user_grp__in = group).values('sername').distinct()
-			return view_func(request, *args, **kwargs) 
-			
+			if 'admin' in list(request.user.groups.values_list('name', flat=True)) :
+				args = server.objects.all() 
+			else : 	
+				group = list(request.user.groups.values_list('id',flat = True))
+				args = server.objects.filter(user_grp__in = group).values('sname').distinct()
+			return view_func(request, *args, **kwargs) 	
 	return wrapper_function
 
 def admin_only(view_func):
