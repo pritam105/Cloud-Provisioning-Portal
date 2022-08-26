@@ -96,7 +96,7 @@ def main() :
         startTime = datetime.time(9, 00) 
         stopTime = datetime.time(22, 00) 
 
-        if Hr_now == 9 :        # MORNING START TIME
+        if timeNow == 9 :        # MORNING START TIME
             
             #List of instance IDs of all infra critical servers
             infraCritical = server.objects.filter(infraCritical = 1).values_list('InstID', flat = True)
@@ -445,24 +445,23 @@ def defaultCheck(records) :
     '''
     startS = []
     stopS = []
-    onFlag = 0 
-    startFlag = 0
-    stopFlag = 0
+    startReqFlag = 0
+    stopReqFlag = 0
+    stopNonReqFlag = 0
     #List of instance IDs of all infra critical servers
     infraCritical = server.objects.filter(infraCritical = 1).values_list('InstID', flat = True)
         
     req = requestdetail.objects.exclude(didItStart = 'Y', didItStop = 'Y', Date = datetime.today())
-    once = req.filter(scheduleFlag = 1, Date = date.today())
+    #once = req.filter(scheduleFlag = 1, Date = date.today())
 
-    rec = once.objects.order_by('sername')
+    rec = req.objects.order_by('sername')
     key = []
     for i in rec : 
         if i.sername not in key : 
             key.append(i.sername)
 
     for row in key :
-        startTime = min(rec.filter(sername = row).values_list('start', flat = True))
-        stopTime = max(rec.filter(sername = row).values_list('stop', flat = True))
+        #startTime = min(rec.filter(sername = row).values_list('start', flat = True)) 
         
         instances = rec.filter(sername = row)
 
@@ -471,14 +470,13 @@ def defaultCheck(records) :
                 #Current time is the start time of this instance
                 instance.didItStart = 'Y'
                 #startS.append(instance.InstID)  
-                startFlag = 1
+                startReqFlag = 1
 
+            #ask abt this
             elif timeNow < instance.start : 
                 if not checkIfYN(instances) :  #if any req does not have Y N (including current req)
-                    #stopS.append(instance.InstID)
-                    stopFlag = 1
-
-            elif timeNow > instance.start : 
+                    # if any other req for this instance is not already in execution
+                    stopNonReqFlag = 1 
 
 
         for instance in instances :
@@ -487,99 +485,34 @@ def defaultCheck(records) :
                 instance.didItStop = 'Y'  
                 #Stop the instance if any of the other req has Y N 
                 check = instances.exclude(id = instance.id)     # this is the request id
-                if(not checkIfYN(check)) :
-                    stopFlag = 1
+                if(not checkIfYN(check)) : #if any req does not have Y N 
+                    stopReqFlag = 1
 
+            #ask abt this
              elif timeNow > instance.stop : 
-                 if(not checkIfYN(check)) :
-                    stopFlag = 1
+                 if(not checkIfYN(instances)) :
+                    stopNonReqFlag = 1
                 
-        if stopFlag == 1 :
-            stopS.append(server.objects.get(sname = row).InstID)
-        elif startFlag == 1 : 
-            startS.append(server.objects.get(sname = row).InstID)    
+        if startReqFlag == 1 and stopReqFlag == 0 :
+            startS.append(server.objects.get(sname = row).InstID)
+        elif stopNonReqFlag == 1 or stopReqFlag == 1 : 
+            stopS.append(server.objects.get(sname = row).InstID)    
                 
-            if stopTime == timeNow :
-                #Current time is the max start time among all the req for this instance
-                stopS.append(instance.InstID)
-                instance.scheduleFlag = 0 
-                instance.Date = None
-                instance.start = None
-                instance.stop = None 
-
-            if timeNow < str(instance.start) or timeNow > str(instance.stop) :
-                #Current time is before or after the slot 
-                stopS.append(instance.InstID)    
-
-        elif row.start < datetime.now().time() < row.stop :
-            #Current time is between the slot timings
-            onFlag = 1     
-
-    for row in records:
-        #target_start_hr = row[2].seconds//3600
-        #target_start_min = (row[2].seconds%3600)//60
-        
-        if row.Date == date.today() : 
-            if target_start_hr == Hr_now and target_start_min == Min_now :  
-                startS.append(row.InstID)
-                row.didItStart = 'Y'
-
-            if target_stop_hr == Hr_now and target_stop_min == Min_now :
-                stopS.append(row.InstID)
-                row.scheduleFlag = 0 
-                row.Date = None
-                row.start = None
-                row.stop = None 
-
-            elif datetime.now().time() < row.start or datetime.now().time() > row.stop: 
-                #Current time is before or after the slot 
-                stopS.append(row.InstID)    
-
-            elif row.start < datetime.now().time() < row.stop :
-                #Current time is between the slot timings
-                onFlag = 1 
-                    
-        elif row.Date < date.today() :    #Date is in the past : 
-            row.Date = None
-            stopS.append(row.InstID)
-
-        elif row.Date > date.today() :    #Date is in the future : 
-            stopS.append(row.InstID)        
-
-        elif row.scheduleFlag == 2 :
-            if row.From <= date.today() <= row.To :
-                if target_start_hr == Hr_now and target_start_min == Min_now :  
-                    startS.append(row.InstID)
-
-                if target_stop_hr == Hr_now and target_stop_min == Min_now :
-                    stopS.append(row.InstID)
-                    row.scheduleFlag = 0 
-                    row.Date = None
-                    row.start = None
-                    row.stop = None 
-
-                elif datetime.now().time() < row.start or datetime.now().time() > row.stop: 
-                    #Current time is before or after the slot 
-                    stopS.append(row.InstID) 
-
-            elif row.Date < date.today() :    #Date is in the past : 
-                row.Date = None
-                stopS.append(row.InstID)
-
-            elif row.Date > date.today() :    #Date is in the future : 
-                stopS.append(row.InstID)        
-
+         
         if len(startS) != 0 :
             StartInstance(infraCritical) 
             waiter = ec2.get_waiter('instance_running')
             waiter.wait(InstanceIds = infraCritical)
 
             StartInstance(startS)
-        else : 
-            StopInstance(stopS)    
-        StopInstance(stopS)
+        
+        if len(stopS) != 0 : 
+            StopInstance(stopS)
 
 def checkIfYN(check) :
+    if len(check) == 0 :
+        return False 
+
     for c in check : 
         if c.didItStart == 'Y' and c.didItStop == 'N' :
             return True 

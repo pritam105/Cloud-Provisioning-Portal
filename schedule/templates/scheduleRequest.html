@@ -2,6 +2,9 @@
 
 
 {% block content %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/slim-select/1.27.0/slimselect.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/slim-select/1.27.0/slimselect.min.css" rel="stylesheet"></link>
+
         <h2> Exempt - Schedule Server </h2>
         <hr/>
         <br/>
@@ -9,7 +12,8 @@
     <form method="POST">
         {% csrf_token%}
         Server Name :
-        <select name = 'sername' multiple = "" class = "ui fluid dropdown"> 
+        <!--<select name = 'sername' multiple = "" class = "ui fluid dropdown"> -->
+        <select name = 'sername' id = slim-select>     
             <option selected disabled = True > --Select Name-- </option>
             {% for result in serverobj %}
             <option> {{result.sname}} </option>
@@ -38,11 +42,14 @@
         <br>    
         <br/>
        
-        
-
         <script>
+            import SlimSelect from 'slim-select'
 
-            function displayRadioValue() {
+            new SlimSelect({
+            select: '#slim-select'})
+
+            function displayRadioValue() 
+            {
                 var ele = document.getElementsByName('choice');
                 var output = document.getElementById("result");
 
@@ -50,7 +57,7 @@
                 {
                     if(ele[i].checked)
                     {    
-                        if(ele[i].value == "Schedule Once")
+                         if(ele[i].value == "Schedule Once")
                         {  
                             output.innerHTML = "Date : "+"<input type = 'date' name = 'date' >   Start Time : <input type = 'time' name = 'start' step = '1800' >   Stop Time  : <input type = 'time' name = 'stop' step = '1800' > <br/> <br/> <input type = 'submit' value = 'Insert into schedule record'>";
                         }
@@ -62,6 +69,7 @@
                     }  
                 }      
             }
+
         </script>
 
         <!-- 

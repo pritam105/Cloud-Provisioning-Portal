@@ -5,3 +5,4 @@ from .models import *
 admin.site.register(server)
 admin.site.register(requestdetail)
 admin.site.register(rds)
+admin.site.register(test)

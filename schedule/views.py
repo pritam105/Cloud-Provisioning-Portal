@@ -91,6 +91,8 @@ def scheduleRequest(request, *args, **kwargs) :
                 messages.success(request, 'Please enter a valid Date!')
             '''
             instance.scheduleFlag = 1
+            print(request.POST.get('sername'))
+            print(type(request.POST.get('sername')))
             instance.sername = request.POST.get('sername')
             instance.date = request.POST.get('date')
             instance.start = request.POST.get('start')
